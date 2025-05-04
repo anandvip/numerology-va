@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerology Calculator</title>
+    <style>
+        :root {
+            --primary: #4a1e9e;
+            --secondary: #7d4cdb;
+            --accent: #b794f4;
+            --background: #f8f9fa;
+            --text: #2d3748;
+            --light-text: #4a5568;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+        }
+
+        .section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .calculation {
+            background-color: #f0f4f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid var(--border);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .number-meanings {
+            display: none;
+        }
+
+        .tab {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background-color: #f1f1f1;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            color: var(--text);
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            animation: fadeEffect 1s;
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .result-card {
+            background-color: #f0f8ff;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .master-number {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--light-text);
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Numerology Calculator & Reference Guide</h1>
+            <p>Discover the numerical patterns that influence your life's journey</p>
+        </div>
+
+        <div class="section">
+            <h2>Numerology Calculator</h2>
+            <p>Enter your information below to calculate your numerological profile</p>
+            
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'BasicInfo')">Basic Information</button>
+                <button class="tablinks" onclick="openTab(event, 'AdvancedCalc')">Advanced Calculations</button>
+                <button class="tablinks" onclick="openTab(event, 'NumberMeanings')">Number Meanings</button>
+                <button class="tablinks" onclick="openTab(event, 'ReferenceGuide')">Reference Guide</button>
+            </div>
+
+            <div id="BasicInfo" class="tabcontent" style="display: block;">
+                <div class="form-group">
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" id="fullName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="birthDate">Birth Date:</label>
+                    <input type="date" id="birthDate">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="text" id="phoneNumber" placeholder="Enter your phone number (digits only)">
+                </div>
+                <button onclick="calculateNumerology()">Calculate</button>
+                
+                <div id="basicResults" class="result-section">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+
+            <div id="AdvancedCalc" class="tabcontent">
+                <h3>Advanced Numerological Calculations</h3>
+                <p>This section provides a deeper analysis of your numerological profile.</p>
+                
+                <div id="advancedResults" class="result-section">
+                    <!-- Advanced results will appear here -->
+                </div>
+            </div>
+
+            <div id="NumberMeanings" class="tabcontent">
+                <h3>Number Meanings Reference</h3>
+                <p>Understanding the significance of each number in numerology</p>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h3>Number 1</h3>
+                        <p>Leadership, independence, originality, innovation, self-reliance, assertiveness, pioneering spirit, strong will, determination, individuality.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 2</h3>
+                        <p>Cooperation, diplomacy, partnership, harmony, balance, adaptability, consideration, receptivity, sensitivity, support.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 3</h3>
+                        <p>Creativity, self-expression, optimism, communication, joy, enthusiasm, inspiration, imagination, artistic ability, social interaction.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 4</h3>
+                        <p>Stability, foundation, practicality, organization, reliability, determination, discipline, honesty, hard work, building solid structures.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 5</h3>
+                        <p>Freedom, versatility, change, adventure, travel, curiosity, exploration, adaptability, variety, sensory experience.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 6</h3>
+                        <p>Responsibility, nurturing, care, service, harmony, healing, teaching, community, family, balance, artistic appreciation.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 7</h3>
+                        <p>Analysis, introspection, wisdom, spirituality, technical skill, research, perfection, mental process, solitude, inner knowing.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 8</h3>
+                        <p>Achievement, authority, power, material success, business acumen, organization, ambition, executive ability, financial management, leadership.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Number 9</h3>
+                        <p>Completion, universal love, compassion, humanity, global consciousness, philanthropy, artistic creativity, spiritual wisdom, integrity.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Master Number 11</h3>
+                        <p>Spiritual insight, intuition, illumination, idealism, inspiration, visionary potential, channeling, sensitivity, artistic inspiration.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Master Number 22</h3>
+                        <p>Master builder, large-scale endeavors, practical idealism, material manifestation of the spiritual, global influence, leadership, vision, power.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Master Number 33</h3>
+                        <p>Spiritual teacher, compassionate service, selfless nurturing, high artistic expression, raising consciousness, healing, guidance.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ReferenceGuide" class="tabcontent">
+                <h3>Numerological Calculations Reference Guide</h3>
+                <p>Detailed explanations of how each number is calculated</p>
+                
+                <table>
+                    <tr>
+                        <th>Number Type</th>
+                        <th>What It Represents</th>
+                        <th>How to Calculate</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>Life Path Number</td>
+                        <td>Core life purpose and journey</td>
+                        <td>Add all digits in birth date</td>
+                        <td>DOB: 25.03.1969<br>
+                            Day: 25 → 2+5 = 7<br>
+                            Month: 03 → 3<br>
+                            Year: 1969 → 1+9+6+9 = 25 → 2+5 = 7<br>
+                            Sum: 7+3+7 = 17 → 1+7 = 8<br>
+                            Result: Life Path 8</td>
+                    </tr>
+                    <tr>
+                        <td>Expression Number</td>
+                        <td>Talents and abilities</td>
+                        <td>Convert all letters in full name to numbers and add</td>
+                        <td>Name: Vipul Anand<br>
+                            V(4)+I(9)+P(7)+U(3)+L(3)+A(1)+N(5)+A(1)+N(5)+D(4) = 42 → 4+2 = 6<br>
+                            Result: Expression 6</td>
+                    </tr>
+                    <tr>
+                        <td>Soul Urge Number</td>
+                        <td>Inner desires and motivations</td>
+                        <td>Convert only vowels in full name to numbers and add</td>
+                        <td>Name: Vipul Anand<br>
+                            Vowels: I(9)+U(3)+A(1)+A(1) = 14 → 1+4 = 5<br>
+                            Result: Soul Urge 5</td>
+                    </tr>
+                    <tr>
+                        <td>Personality Number</td>
+                        <td>How others see you</td>
+                        <td>Convert only consonants in full name to numbers and add</td>
+                        <td>Name: Vipul Anand<br>
+                            Consonants: V(4)+P(7)+L(3)+N(5)+N(5)+D(4) = 28 → 2+8 = 10 → 1+0 = 1<br>
+                            Result: Personality 1</td>
+                    </tr>
+                    <tr>
+                        <td>Birthday Number</td>
+                        <td>Special talents and gifts</td>
+                        <td>Just the day of birth, reduced if needed</td>
+                        <td>Born on 25th<br>
+                            2+5 = 7<br>
+                            Result: Birthday 7</td>
+                    </tr>
+                    <tr>
+                        <td>Personal Year Number</td>
+                        <td>Annual cycle influences</td>
+                        <td>Birth day + Birth month + Current year</td>
+                        <td>For 2025 with birth date 25.03<br>
+                            25+3+2025 = 2053 → 2+0+5+3 = 10 → 1+0 = 1<br>
+                            Result: Personal Year 1 for 2025</td>
+                    </tr>
+                    <tr>
+                        <td>Challenge Numbers</td>
+                        <td>Life lessons to overcome</td>
+                        <td>Various calculations between birth date components</td>
+                        <td>First Challenge: |Birth month - Birth day|<br>
+                            |3-7| = 4<br>
+                            Second Challenge: |Birth day - Birth year reduced|<br>
+                            |7-7| = 0<br>
+                            Third Challenge: |First Challenge - Second Challenge|<br>
+                            |4-0| = 4<br>
+                            Fourth Challenge: |Birth month - Birth year reduced|<br>
+                            |3-7| = 4</td>
+                    </tr>
+                    <tr>
+                        <td>Phone Number Numerology</td>
+                        <td>Environmental influences</td>
+                        <td>Add all digits in phone number</td>
+                        <td>Phone: 9896918475<br>
+                            9+8+9+6+9+1+8+4+7+5 = 66 → 6+6 = 12 → 1+2 = 3<br>
+                            Result: Phone Number 3</td>
+                    </tr>
+                    <tr>
+                        <td>Master Numbers</td>
+                        <td>Special spiritual potential</td>
+                        <td>Don't reduce 11, 22, or 33 further</td>
+                        <td>If calculation yields 11, keep as 11 rather than reducing to 2</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>This numerology calculator is designed as a tool for personal insight and exploration.</p>
+    </footer>
+
+    <script>
+        // Letter to number conversion for numerology
+        const letterValues = {
+            'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9,
+            'j': 1, 'k': 2, 'l': 3, 'm': 4, 'n': 5, 'o': 6, 'p': 7, 'q': 8, 'r': 9,
+            's': 1, 't': 2, 'u': 3, 'v': 4, 'w': 5, 'x': 6, 'y': 7, 'z': 8
+        };
+
+        // Function to reduce a number to a single digit unless it's a master number
+        function reduceNumber(num) {
+            // Check for master numbers
+            if (num === 11 || num === 22 || num === 33) {
+                return num;
+            }
+            
+            // Reduce to single digit
+            while (num > 9) {
+                let sum = 0;
+                while (num > 0) {
+                    sum += num % 10;
+                    num = Math.floor(num / 10);
+                }
+                num = sum;
+                
+                // Check for master numbers after reduction
+                if (num === 11 || num === 22 || num === 33) {
+                    return num;
+                }
+            }
+            return num;
+        }
+
+        // Function to calculate Life Path Number
+        function calculateLifePath(birthDate) {
+            const date = new Date(birthDate);
+            const day = date.getDate();
+            const month = date.getMonth() + 1; // Month is 0-indexed
+            const year = date.getFullYear();
+            
+            const dayReduced = reduceNumber(day);
+            const monthReduced = reduceNumber(month);
+            const yearReduced = reduceNumber(year);
+            
+            const sum = dayReduced + monthReduced + yearReduced;
+            return reduceNumber(sum);
+        }
+
+        // Function to calculate Expression Number (full name)
+        function calculateExpression(name) {
+            let sum = 0;
+            name = name.toLowerCase().replace(/[^a-z]/g, '');
+            
+            for (let i = 0; i < name.length; i++) {
+                sum += letterValues[name[i]] || 0;
+            }
+            
+            return reduceNumber(sum);
+        }
+
+        // Function to calculate Soul Urge Number (vowels)
+        function calculateSoulUrge(name) {
+            let sum = 0;
+            name = name.toLowerCase();
+            const vowels = 'aeiou';
+            
+            for (let i = 0; i < name.length; i++) {
+                if (vowels.includes(name[i])) {
+                    sum += letterValues[name[i]] || 0;
+                }
+            }
+            
+            return reduceNumber(sum);
+        }
+
+        // Function to calculate Personality Number (consonants)
+        function calculatePersonality(name) {
+            let sum = 0;
+            name = name.toLowerCase().replace(/[^a-z]/g, '');
+            const vowels = 'aeiou';
+            
+            for (let i = 0; i < name.length; i++) {
+                if (!vowels.includes(name[i])) {
+                    sum += letterValues[name[i]] || 0;
+                }
+            }
+            
+            return reduceNumber(sum);
+        }
+
+        // Function to calculate Birthday Number
+        function calculateBirthday(birthDate) {
+            const date = new Date(birthDate);
+            const day = date.getDate();
+            return reduceNumber(day);
+        }
+
+        // Function to calculate Phone Number
+        function calculatePhoneNumber(phone) {
+            let sum = 0;
+            phone = phone.replace(/\D/g, '');
+            
+            for (let i = 0; i < phone.length; i++) {
+                sum += parseInt(phone[i]);
+            }
+            
+            return reduceNumber(sum);
+        }
+
+        // Function to calculate Challenge Numbers
+        function calculateChallenges(birthDate) {
+            const date = new Date(birthDate);
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            
+            const dayReduced = reduceNumber(day);
+            const monthReduced = reduceNumber(month);
+            const yearReduced = reduceNumber(year);
+            
+            const firstChallenge = Math.abs(monthReduced - dayReduced);
+            const secondChallenge = Math.abs(dayReduced - yearReduced);
+            const thirdChallenge = Math.abs(firstChallenge - secondChallenge);
+            const fourthChallenge = Math.abs(monthReduced - yearReduced);
+            
+            return {
+                first: firstChallenge,
+                second: secondChallenge,
+                third: thirdChallenge,
+                fourth: fourthChallenge
+            };
+        }
+
+        // Function to calculate Personal Year
+        function calculatePersonalYear(birthDate) {
+            const date = new Date(birthDate);
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            
+            const sum = day + month + currentYear;
+            return reduceNumber(sum);
+        }
+
+        // Main calculate function
+        function calculateNumerology() {
+            const fullName = document.getElementById('fullName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            
+            if (!fullName || !birthDate) {
+                alert('Please enter your full name and birth date.');
+                return;
+            }
+            
+            // Calculate basic numbers
+            const lifePath = calculateLifePath(birthDate);
+            const expression = calculateExpression(fullName);
+            const soulUrge = calculateSoulUrge(fullName);
+            const personality = calculatePersonality(fullName);
+            const birthday = calculateBirthday(birthDate);
+            const phone = phoneNumber ? calculatePhoneNumber(phoneNumber) : 'N/A';
+            
+            // Display basic results
+            let htmlBasic = '<h3>Your Numerology Profile</h3>';
+            
+            htmlBasic += `<div class="result-card">
+                <strong>Life Path Number:</strong> ${lifePath} 
+                <p>Your core life purpose and journey</p>
+            </div>`;
+            
+            htmlBasic += `<div class="result-card">
+                <strong>Expression Number:</strong> ${expression}
+                <p>Your talents and abilities</p>
+            </div>`;
+            
+            htmlBasic += `<div class="result-card">
+                <strong>Soul Urge Number:</strong> ${soulUrge}
+                <p>Your inner desires and motivations</p>
+            </div>`;
+            
+            htmlBasic += `<div class="result-card">
+                <strong>Personality Number:</strong> ${personality}
+                <p>How others see you</p>
+            </div>`;
+            
+            htmlBasic += `<div class="result-card">
+                <strong>Birthday Number:</strong> ${birthday}
+                <p>Your special talents and gifts</p>
+            </div>`;
+            
+            if (phone !== 'N/A') {
+                htmlBasic += `<div class="result-card">
+                    <strong>Phone Number:</strong> ${phone}
+                    <p>Environmental influences</p>
+                </div>`;
+            }
+            
+            document.getElementById('basicResults').innerHTML = htmlBasic;
+            
+            // Calculate advanced numbers
+            const challenges = calculateChallenges(birthDate);
+            const personalYear = calculatePersonalYear(birthDate);
+            
+            // Display advanced results
+            let htmlAdvanced = '<h3>Advanced Numerology Profile</h3>';
+            
+            htmlAdvanced += `<div class="result-card">
+                <strong>Personal Year Number:</strong> ${personalYear}
+                <p>Your current yearly cycle influences</p>
+            </div>`;
+            
+            htmlAdvanced += `<div class="result-card">
+                <strong>Challenge Numbers:</strong>
+                <p>First Challenge (Early Life): ${challenges.first}</p>
+                <p>Second Challenge (Middle Life): ${challenges.second}</p>
+                <p>Third Challenge (Later Life): ${challenges.third}</p>
+                <p>Fourth Challenge (Lifelong): ${challenges.fourth}</p>
+            </div>`;
+            
+            // Check for missing numbers
+            const allNumbers = [lifePath, expression, soulUrge, personality, birthday, personalYear];
+            const presentNumbers = new Set(allNumbers);
+            const missingNumbers = [];
+            
+            for (let i = 1; i <= 9; i++) {
+                if (!presentNumbers.has(i)) {
+                    missingNumbers.push(i);
+                }
+            }
+            
+            htmlAdvanced += `<div class="result-card">
+                <strong>Missing Numbers:</strong> ${missingNumbers.length > 0 ? missingNumbers.join(', ') : 'None'}
+                <p>Numbers that may represent areas for personal development</p>
+            </div>`;
+            
+            document.getElementById('advancedResults').innerHTML = htmlAdvanced;
+            
+            // Switch to show advanced results
+            openTab(null, 'AdvancedCalc');
+        }
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            document.getElementById(tabName).style.display = "block";
+            
+            if (evt) {
+                evt.currentTarget.className += " active";
+            } else {
+                // Find the tab button for this tab and activate it
+                for (let i = 0; i < tablinks.length; i++) {
+                    if (tablinks[i].textContent.includes(tabName.replace(/([A-Z])/g, ' $1').trim())) {
+                        tablinks[i].className += " active";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
